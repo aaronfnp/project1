@@ -129,15 +129,26 @@ function runGame(event) {
     )
       return;
     // Selects Piece if 1st click
-    if (clickSelector === 1 && clickedTarget) {
+    if (clickSelector === 1) {
       console.log("first click");
       selected_Piece = event.target;
       selected_Piece_Data = boardArray[cellData][colData];
-      selected_Piece.style.backgroundColor = "red";
+      console.log(selected_Piece_Data);
+
+      if (selected_Piece_Data instanceof base_piece) {
+        selected_Piece.style.backgroundColor = "green";
+      } else {
+        resetSelectData();
+        return;
+      }
     }
-    // TODO - MUST CHECK IF SAME SELECTION AS CLICK 1
+
     // Selects Space to move if 2nd click
-    if (clickSelector === -1) {
+    if (clickSelector === -1 && selected_Piece === event.target) {
+      resetSelectData();
+    }
+
+    if (clickSelector === -1 && selected_Piece_Data !== null) {
       console.log("second click");
       selected_Space = event.target;
 
