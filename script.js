@@ -32,15 +32,17 @@ let clickSelector = 1;
 let selected_Piece = null;
 let selected_Space = null;
 let selected_Piece_Data = {};
+let selected_Space_Data = {};
 
 let winner = null;
 
 /* --- CLASSES --- */
 
 class base_piece {
-  constructor(isKing, position, player, color) {
+  constructor(isKing, rowPos, colPos, player, color) {
     this.isKing = isKing;
-    this.position = position;
+    this.colPos = colPos;
+    this.rowPos = rowPos;
     this.player = player;
     this.color = color;
   }
@@ -61,7 +63,7 @@ function initializeGame() {
   for (i = 0; i < 8; i++) {
     if (i === 0 || i === 2 || i === 6) {
       for (j = 0; j < 8; j += 2) {
-        let piece = new base_piece(false, boardArray[i][j], 1, "white");
+        let piece = new base_piece(false, i, j, 1, "white");
         boardArray[i][j] = piece;
         var col = boardEl.querySelector('.col[col-data="' + j + '"]');
         col.children[i].innerHTML = `<h2>O</h2>`;
@@ -77,7 +79,7 @@ function initializeGame() {
     }
     if (i === 1 || i === 5 || i === 7) {
       for (j = 1; j < 8; j += 2) {
-        let piece = new base_piece(false, boardArray[i][j], 2, "red");
+        let piece = new base_piece(false, i, j, -1, "red");
         boardArray[i][j] = piece;
         var col = boardEl.querySelector('.col[col-data="' + j + '"]');
         col.children[i].innerHTML = `<h2>O</h2>`;
@@ -91,22 +93,13 @@ function initializeGame() {
         }
       }
     }
-    // if (i === 1 || i === 2 || i === 3) {
-    //     col.children[i].style.color = "red";
-    //   }
-    //   if (i === 5 || i === 6 || i === 7) {
-    //     col.children[i].style.color = "green";
-    //   }
   }
   console.log(boardArray);
-  // Change colors of all the cells
-  // Add the pieces to the cells
-  // Render the new pieces
 }
 
 function renderBoard() {
   colEls.forEach((col, colIndex) => {
-    // Loop through each cell in the column
+    // Loop through each cell in the column to color board
     [...col.children].forEach((cell, cellIndex) => {
       if ((colIndex + cellIndex) % 2 === 0) {
         cell.style.backgroundColor = "black";
@@ -134,43 +127,63 @@ function runGame(event) {
       selected_Piece = event.target;
       selected_Piece_Data = boardArray[cellData][colData];
       console.log(selected_Piece_Data);
-
-      if (selected_Piece_Data instanceof base_piece) {
+      // Verifies that selection is a piece
+      if (
+        selected_Piece_Data instanceof base_piece &&
+        selected_Piece_Data.player === playerTurn
+      ) {
         selected_Piece.style.backgroundColor = "green";
+        //Used to save original position
+        current_Cell = cellData;
+        current_Col = colData;
       } else {
+        //Resets if blank space
         resetSelectData();
         return;
       }
     }
 
-    // Selects Space to move if 2nd click
+    // Resets if clicked on same space
     if (clickSelector === -1 && selected_Piece === event.target) {
       resetSelectData();
     }
 
+    // Selects Space to move if 2nd click
     if (clickSelector === -1 && selected_Piece_Data !== null) {
       console.log("second click");
       selected_Space = event.target;
+      selected_Space_Data = boardArray[cellData][colData];
+      // If selection is another piece, returns & highlights
+      if (selected_Space_Data instanceof base_piece) {
+        // POSSIBLE TO FLASH RED?
+        selected_Space.style.backgroundColor = "blue";
+        return;
+      }
 
+      // NOW NEED TO MAKE JUMP OVER MECHANIC
+      if (boardArray[cellData - 1][colData - 1] instanceof base_piece) {
+      }
+
+      // Creates new piece using selected data
       boardArray[cellData][colData] = new base_piece(
         selected_Piece_Data.isKing,
-        `${cellData}_${colData}`,
+        cellData,
+        colData,
         selected_Piece_Data.player,
         selected_Piece_Data.color
       );
 
-      console.log(`Place piece at ${boardArray[cellData][colData]}`);
-      loadData(selected_Piece);
-      console.log(`Loading Data: ${selected_Piece}`);
+      // Changes visuals for HTML
       selected_Space.innerHTML = `<h2>O</h2>`;
       selected_Space.style.color = selected_Piece_Data.color;
-      console.log(`Added at ${selected_Space}`);
       selected_Piece.innerHTML = `<h2></h2>`;
-      console.log(`Removed at ${selected_Piece}`);
+      boardArray[current_Cell][current_Col] = `${current_Cell}_${current_Col}`;
 
       resetSelectData();
 
       console.log(boardArray);
+      //Changes player turn
+      playerTurn *= -1;
     }
     // Changes to 2nd click
     clickSelector *= -1;
@@ -182,6 +195,8 @@ function resetSelectData() {
   selected_Piece = null;
   selected_Space = null;
   selected_Piece_Data = null;
+  current_Cell = null;
+  current_Col = null;
 }
 
 function loadData(clickedTarget) {
@@ -189,5 +204,5 @@ function loadData(clickedTarget) {
   colData = col.getAttribute("col-data");
   cellData = clickedTarget.getAttribute("cell-data");
   console.log(`Column: ${colData}`);
-  console.log(`Cell: ${cellData}`);
+  console.log(`Row: ${cellData}`);
 }
