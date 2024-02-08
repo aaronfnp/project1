@@ -35,6 +35,7 @@ let selected_Space = null;
 let selected_Piece_Data = {};
 let selected_Space_Data = {};
 let isMoveValid = false;
+let isJumpOver = false;
 
 let winner = null;
 
@@ -162,23 +163,30 @@ function runGame(event) {
       Math.abs(cellData - current_Cell) === 2
     ) {
       console.log("logic for 2 jump");
+      isJumpOver = true;
+      //Removing Jumped Over Piece Logic
+      if (isJumpOver) {
+        // let diffModifierCol = 2 / (colData - current_Col)
+        // let diffModifierRow = 2 / (cellData - current_Cell)
+        // if (boardarray[current_Cell + diffModRow][current_Col + diffModCol] instanceof Piece)
+        // {
+        //Boardarray[] = `${boardarray[].row}_${boardarray[].col}
+        // }
+        // else {
+        //     return
+        // }
+      }
       // Must check if boardaray[] - 1 is instanceof piece
     }
     // Returns if larger gap than 1 && != 2
-    if (
-      Math.abs(colData - current_Col) > 1 ||
-      Math.abs(cellData - current_Cell) > 1
-    ) {
-      return;
+    if (!isJumpOver) {
+      if (
+        Math.abs(colData - current_Col) > 1 ||
+        Math.abs(cellData - current_Cell) > 1
+      ) {
+        return;
+      }
     }
-
-    console.log(`Old Cell Data ${current_Cell}`);
-    console.log(`Old Col Data ${current_Col}`);
-    console.log(`New Col Data ${colData}`);
-    console.log(`New Cell Data ${cellData}`);
-
-    console.log(colData - current_Col);
-    console.log(cellData - current_Cell);
 
     // Resets if clicked on same space
     if (clickSelector === -1 && selected_Piece === event.target) {
@@ -236,6 +244,7 @@ function resetSelectData() {
   current_Cell = null;
   current_Col = null;
   isMoveValid = false;
+  isJumpOver = false;
 }
 
 function loadData(clickedTarget) {
