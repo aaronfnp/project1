@@ -63,34 +63,36 @@ function initializeGame() {
   for (i = 0; i < 8; i++) {
     if (i === 0 || i === 2 || i === 6) {
       for (j = 0; j < 8; j += 2) {
-        let piece = new base_piece(false, i, j, 1, "white");
-        boardArray[i][j] = piece;
         var col = boardEl.querySelector('.col[col-data="' + j + '"]');
         col.children[i].innerHTML = `<h2>O</h2>`;
 
         // Color adjusted to placement
         if (i === 0 || i === 2) {
           col.children[i].style.color = player1_Color;
+          var piece = new base_piece(false, i, j, 1, player1_Color);
         }
         if (i === 6) {
           col.children[i].style.color = player2_Color;
+          var piece = new base_piece(false, i, j, -1, player2_Color);
         }
+        boardArray[i][j] = piece;
       }
     }
     if (i === 1 || i === 5 || i === 7) {
       for (j = 1; j < 8; j += 2) {
-        let piece = new base_piece(false, i, j, -1, "red");
-        boardArray[i][j] = piece;
         var col = boardEl.querySelector('.col[col-data="' + j + '"]');
         col.children[i].innerHTML = `<h2>O</h2>`;
 
         // Color adjusted to placement
         if (i === 1) {
           col.children[i].style.color = player1_Color;
+          var piece = new base_piece(false, i, j, 1, player1_Color);
         }
         if (i === 5 || i === 7) {
           col.children[i].style.color = player2_Color;
+          var piece = new base_piece(false, i, j, -1, player2_Color);
         }
+        boardArray[i][j] = piece;
       }
     }
   }
@@ -206,3 +208,20 @@ function loadData(clickedTarget) {
   console.log(`Column: ${colData}`);
   console.log(`Row: ${cellData}`);
 }
+
+// isKingLogic
+// use all 4 statements below
+// use all logic
+// isBaseLogic
+// if player1
+//      if (space col + 2 && row + 2)
+//          if space col + 1 && row + 1 instanceof base_piece
+//   if (space col - 2 && row + 2)
+//          if space col - 1 && row + 1 instanceof base_piece
+// if player2_Color
+// // if (space col + 2 && row - 2)
+//          if space col + 1 && row - 1 instanceof base_piece
+// //   if (space col - 2 && row - 2)
+//          if space col - 1 && row - 1 instanceof base_piece
+// need logic to auto check if can go more,
+// autoChecker();
