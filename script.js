@@ -158,31 +158,34 @@ function runGame(event) {
     }
 
     // Both must be 2 away for jump over logic
-    if (
-      Math.abs(colData - current_Col) === 2 &&
-      Math.abs(cellData - current_Cell) === 2
-    ) {
+
+    //Difference logic for 2 jump
+    let diffCol = parseInt(colData) - parseInt(current_Col);
+    let diffRow = parseInt(cellData) - parseInt(current_Cell);
+
+    if (Math.abs(diffCol) === 2 && Math.abs(diffRow) === 2) {
       console.log("logic for 2 jump");
       isJumpOver = true;
+
       //Removing Jumped Over Piece Logic
       if (isJumpOver) {
-        let diffModifierCol = 2 / (parseInt(colData) - parseInt(current_Col));
-        let diffModifierRow = 2 / (parseInt(cellData) - parseInt(current_Cell));
+        let diffModifierCol = 2 / diffCol;
+        let diffModifierRow = 2 / diffRow;
+        let midRow = parseInt(current_Cell) + diffModifierRow;
+        let midCol = parseInt(current_Col) + diffModifierCol;
 
         if (
-          boardArray[parseInt(current_Cell) + diffModifierRow][
-            parseInt(current_Col) + diffModifierCol
-          ] instanceof base_piece
+          boardArray[midRow][midCol] instanceof base_piece
           // NEED TO ADD AND OTHER TEAM
         ) {
-          let pieceToRemove =
-            boardArray[parseInt(current_Cell) + diffModifierRow][
-              parseInt(current_Col) + diffModifierCol
-            ];
-          boardArray[parseInt(current_Cell) + diffModifierRow][
-            parseInt(current_Col) + diffModifierCol
+          let pieceToRemove = boardArray[midRow][midCol];
+          boardArray[midRow][
+            midCol
           ] = `${pieceToRemove.rowPos}_${pieceToRemove.colPos}`;
-          // NEED TO REMOVE THE <h2> of the PIECE
+          // NEED TO ADD COUNTER PER TEAM
+
+          var col = boardEl.querySelector('.col[col-data="' + midCol + '"]');
+          col.children[midRow].innerHTML = `<h2></h2>`;
         } else {
           return;
         }
