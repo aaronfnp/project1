@@ -13,6 +13,7 @@ const boardArray = [
 const boardEl = document.querySelector("#board-wrapper");
 const colEls = [...boardEl.children];
 
+// Board Data Variables
 let colData = null;
 let cellData = null;
 let current_Col = null;
@@ -33,6 +34,7 @@ let selected_Piece = null;
 let selected_Space = null;
 let selected_Piece_Data = {};
 let selected_Space_Data = {};
+let isMoveValid = false;
 
 let winner = null;
 
@@ -59,14 +61,14 @@ function initializeGame() {
 
   renderBoard();
 
-  // SETTING INITIAL PIECE COUNTERS ON HTML
+  // SETTING INITIAL PIECE COUNTERS ON HTML + ARRAY
   for (i = 0; i < 8; i++) {
     if (i === 0 || i === 2 || i === 6) {
       for (j = 0; j < 8; j += 2) {
         var col = boardEl.querySelector('.col[col-data="' + j + '"]');
         col.children[i].innerHTML = `<h2>O</h2>`;
 
-        // Color adjusted to placement
+        // Color adjusted to placement & creates new pieces
         if (i === 0 || i === 2) {
           col.children[i].style.color = player1_Color;
           var piece = new base_piece(false, i, j, 1, player1_Color);
@@ -116,6 +118,15 @@ function runGame(event) {
   if (!winner) {
     // Sets Clicked Target & Loads Data
     let clickedTarget = event.target;
+
+    //If text element is clicked, swaps to the parent div
+    if (clickedTarget.tagName === "H2") {
+      console.log(clickedTarget);
+      clickedTarget = clickedTarget.parentElement;
+    }
+
+    console.log(clickedTarget);
+
     loadData(clickedTarget);
     // Checks if selection valid
     if (
@@ -126,7 +137,7 @@ function runGame(event) {
     // Selects Piece if 1st click
     if (clickSelector === 1) {
       console.log("first click");
-      selected_Piece = event.target;
+      selected_Piece = clickedTarget;
       selected_Piece_Data = boardArray[cellData][colData];
       console.log(selected_Piece_Data);
       // Verifies that selection is a piece
@@ -144,6 +155,30 @@ function runGame(event) {
         return;
       }
     }
+
+    // Both must be 2 away for jump over logic
+    if (
+      Math.abs(colData - current_Col) === 2 &&
+      Math.abs(cellData - current_Cell) === 2
+    ) {
+      console.log("logic for 2 jump");
+      // Must check if boardaray[] - 1 is instanceof piece
+    }
+    // Returns if larger gap than 1 && != 2
+    if (
+      Math.abs(colData - current_Col) > 1 ||
+      Math.abs(cellData - current_Cell) > 1
+    ) {
+      return;
+    }
+
+    console.log(`Old Cell Data ${current_Cell}`);
+    console.log(`Old Col Data ${current_Col}`);
+    console.log(`New Col Data ${colData}`);
+    console.log(`New Cell Data ${cellData}`);
+
+    console.log(colData - current_Col);
+    console.log(cellData - current_Cell);
 
     // Resets if clicked on same space
     if (clickSelector === -1 && selected_Piece === event.target) {
@@ -192,6 +227,7 @@ function runGame(event) {
   }
 }
 
+// Resets all the variables for data
 function resetSelectData() {
   selected_Piece.style.backgroundColor = "black";
   selected_Piece = null;
@@ -199,6 +235,7 @@ function resetSelectData() {
   selected_Piece_Data = null;
   current_Cell = null;
   current_Col = null;
+  isMoveValid = false;
 }
 
 function loadData(clickedTarget) {
