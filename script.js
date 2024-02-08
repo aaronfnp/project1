@@ -166,15 +166,26 @@ function runGame(event) {
       isJumpOver = true;
       //Removing Jumped Over Piece Logic
       if (isJumpOver) {
-        // let diffModifierCol = 2 / (colData - current_Col)
-        // let diffModifierRow = 2 / (cellData - current_Cell)
-        // if (boardarray[current_Cell + diffModRow][current_Col + diffModCol] instanceof Piece)
-        // {
-        //Boardarray[] = `${boardarray[].row}_${boardarray[].col}
-        // }
-        // else {
-        //     return
-        // }
+        let diffModifierCol = 2 / (parseInt(colData) - parseInt(current_Col));
+        let diffModifierRow = 2 / (parseInt(cellData) - parseInt(current_Cell));
+
+        if (
+          boardArray[parseInt(current_Cell) + diffModifierRow][
+            parseInt(current_Col) + diffModifierCol
+          ] instanceof base_piece
+          // NEED TO ADD AND OTHER TEAM
+        ) {
+          let pieceToRemove =
+            boardArray[parseInt(current_Cell) + diffModifierRow][
+              parseInt(current_Col) + diffModifierCol
+            ];
+          boardArray[parseInt(current_Cell) + diffModifierRow][
+            parseInt(current_Col) + diffModifierCol
+          ] = `${pieceToRemove.rowPos}_${pieceToRemove.colPos}`;
+          // NEED TO REMOVE THE <h2> of the PIECE
+        } else {
+          return;
+        }
       }
       // Must check if boardaray[] - 1 is instanceof piece
     }
