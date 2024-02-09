@@ -37,7 +37,9 @@ let selected_Space_Data = {};
 let isMoveValid = false;
 let isJumpOver = false;
 
-let winner = null;
+let isWinner = false;
+let pieceCounter_P1 = 0;
+let pieceCounter_P2 = 0;
 
 /* --- CLASSES --- */
 
@@ -73,10 +75,12 @@ function initializeGame() {
         if (i === 0 || i === 2) {
           col.children[i].style.color = player1_Color;
           var piece = new base_piece(false, i, j, 1, player1_Color);
+          pieceCounter_P1++;
         }
         if (i === 6) {
           col.children[i].style.color = player2_Color;
           var piece = new base_piece(false, i, j, -1, player2_Color);
+          pieceCounter_P2++;
         }
         boardArray[i][j] = piece;
       }
@@ -90,10 +94,12 @@ function initializeGame() {
         if (i === 1) {
           col.children[i].style.color = player1_Color;
           var piece = new base_piece(false, i, j, 1, player1_Color);
+          pieceCounter_P1++;
         }
         if (i === 5 || i === 7) {
           col.children[i].style.color = player2_Color;
           var piece = new base_piece(false, i, j, -1, player2_Color);
+          pieceCounter_P2++;
         }
         boardArray[i][j] = piece;
       }
@@ -116,7 +122,7 @@ function renderBoard() {
 }
 
 function runGame(event) {
-  if (!winner) {
+  if (!isWinner) {
     // Sets Clicked Target & Loads Data
     let clickedTarget = event.target;
 
@@ -175,10 +181,16 @@ function runGame(event) {
         let midCol = parseInt(current_Col) + diffModifierCol;
 
         if (
-          boardArray[midRow][midCol] instanceof base_piece
+          boardArray[midRow][midCol] instanceof base_piece &&
+          boardArray[midRow][midCol].player != selected_Piece_Data.player
           // NEED TO ADD AND OTHER TEAM
         ) {
           let pieceToRemove = boardArray[midRow][midCol];
+          console.log(`Piece is: ${pieceToRemove.color}`);
+          if (pieceToRemove.player === 1) pieceCounter_P1--;
+          else if (pieceToRemove.player === -1) pieceCounter_P2--;
+          console.log(`Piece Counter P1:${pieceCounter_P1}`);
+          console.log(`Piece Counter P2:${pieceCounter_P2}`);
           boardArray[midRow][
             midCol
           ] = `${pieceToRemove.rowPos}_${pieceToRemove.colPos}`;
@@ -194,10 +206,7 @@ function runGame(event) {
     }
     // Returns if larger gap than 1 && != 2
     if (!isJumpOver) {
-      if (
-        Math.abs(colData - current_Col) > 1 ||
-        Math.abs(cellData - current_Cell) > 1
-      ) {
+      if (Math.abs(diffCol) > 1 || Math.abs(diffRow) > 1) {
         return;
       }
     }
@@ -247,6 +256,11 @@ function runGame(event) {
     // Changes to 2nd click
     clickSelector *= -1;
   }
+  if (pieceCounter_P2 === 0) {
+    declareWinner(1);
+  } else if (pieceCounter_P1 === 0) {
+    declareWinner(-1);
+  }
 }
 
 // Resets all the variables for data
@@ -259,6 +273,7 @@ function resetSelectData() {
   current_Col = null;
   isMoveValid = false;
   isJumpOver = false;
+  pieceToRemove = null;
 }
 
 function loadData(clickedTarget) {
@@ -267,6 +282,11 @@ function loadData(clickedTarget) {
   cellData = clickedTarget.getAttribute("cell-data");
   console.log(`Column: ${colData}`);
   console.log(`Row: ${cellData}`);
+}
+
+function declareWinner(player) {
+  isWinner = true;
+  console.log(`Winner is: ${player}`);
 }
 
 // isKingLogic
