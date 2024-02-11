@@ -36,6 +36,7 @@ let selected_Piece_Data = {};
 let selected_Space_Data = {};
 let isMoveValid = false;
 let isJumpOver = false;
+let isForward = false;
 
 let isWinner = false;
 let pieceCounter_P1 = 0;
@@ -219,6 +220,11 @@ function runGame(event) {
       console.log("second click");
       selected_Space = event.target;
       selected_Space_Data = boardArray[cellData][colData];
+
+      // CURRENTLY WORKING ON
+      forwardChecker(diffRow);
+      if (!isForward) return;
+
       // If selection is another piece, returns & highlights
       if (selected_Space_Data instanceof base_piece) {
         // POSSIBLE TO FLASH RED?
@@ -278,6 +284,7 @@ function resetSelectData() {
   isMoveValid = false;
   isJumpOver = false;
   pieceToRemove = null;
+  isForward = false;
 }
 
 function loadData(clickedTarget) {
@@ -293,19 +300,12 @@ function declareWinner(player) {
   console.log(`Winner is: ${player}`);
 }
 
-// isKingLogic
-// use all 4 statements below
-// use all logic
-// isBaseLogic
-// if player1
-//      if (space col + 2 && row + 2)
-//          if space col + 1 && row + 1 instanceof base_piece
-//   if (space col - 2 && row + 2)
-//          if space col - 1 && row + 1 instanceof base_piece
-// if player2_Color
-// // if (space col + 2 && row - 2)
-//          if space col + 1 && row - 1 instanceof base_piece
-// //   if (space col - 2 && row - 2)
-//          if space col - 1 && row - 1 instanceof base_piece
-// need logic to auto check if can go more,
-// autoChecker();
+function forwardChecker(diffRow) {
+  // Checks team turn vs difference
+  console.log(diffRow);
+  if (diffRow === playerTurn) {
+    isForward = true;
+  } else {
+    isForward = false;
+  }
+}
