@@ -34,9 +34,13 @@ let selected_Piece = null;
 let selected_Space = null;
 let selected_Piece_Data = {};
 let selected_Space_Data = {};
+let pieceToRemove = null;
 let isMoveValid = false;
 let isJumpOver = false;
 let isForward = false;
+let isQueueRemove = false;
+let midCol = null;
+let midRow = null;
 
 let isWinner = false;
 let pieceCounter_P1 = 0;
@@ -176,29 +180,17 @@ function runGame(event) {
       if (isJumpOver) {
         let diffModifierCol = 2 / diffCol;
         let diffModifierRow = 2 / diffRow;
-        let midRow = parseInt(current_Cell) + diffModifierRow;
-        let midCol = parseInt(current_Col) + diffModifierCol;
-        let pieceToRemove = boardArray[midRow][midCol];
+        midRow = parseInt(current_Cell) + diffModifierRow;
+        midCol = parseInt(current_Col) + diffModifierCol;
+        pieceToRemove = boardArray[midRow][midCol];
 
         if (
           pieceToRemove instanceof base_piece &&
           pieceToRemove.player != selected_Piece_Data.player
-          // NEED TO ADD AND OTHER TEAM
         ) {
           forwardChecker(diffRow);
           if (!isForward) return;
-          console.log(`Piece is: ${pieceToRemove.color}`);
-          if (pieceToRemove.player === 1) pieceCounter_P1--;
-          else if (pieceToRemove.player === -1) pieceCounter_P2--;
-          console.log(`Piece Counter P1:${pieceCounter_P1}`);
-          console.log(`Piece Counter P2:${pieceCounter_P2}`);
-          boardArray[midRow][
-            midCol
-          ] = `${pieceToRemove.rowPos}_${pieceToRemove.colPos}`;
-          // NEED TO ADD COUNTER PER TEAM
-
-          var col = boardEl.querySelector('.col[col-data="' + midCol + '"]');
-          col.children[midRow].innerHTML = `<h2></h2>`;
+          isQueueRemove = true;
         } else {
           return;
         }
@@ -257,6 +249,10 @@ function runGame(event) {
       selected_Piece.innerHTML = `<h2></h2>`;
       boardArray[current_Cell][current_Col] = `${current_Cell}_${current_Col}`;
 
+      if (isQueueRemove) {
+        removePiece();
+      }
+
       resetSelectData();
 
       console.log(boardArray);
@@ -287,6 +283,9 @@ function resetSelectData() {
   isJumpOver = false;
   pieceToRemove = null;
   isForward = false;
+  isQueueRemove = false;
+  midRow = null;
+  midCol = null;
 }
 
 function loadData(clickedTarget) {
@@ -318,4 +317,23 @@ function forwardChecker(diffRow) {
     isForward = false;
     console.log(`is not Forward`);
   }
+}
+
+function continuousChecker() {
+  //Checks if 2 in front has piece
+  // if yes, checks if the one beyond is open
+}
+
+function removePiece() {
+  //console.log(`Piece is: ${pieceToRemove.color}`);
+  if (pieceToRemove.player === 1) pieceCounter_P1--;
+  else if (pieceToRemove.player === -1) pieceCounter_P2--;
+  console.log(`Piece Counter P1:${pieceCounter_P1}`);
+  console.log(`Piece Counter P2:${pieceCounter_P2}`);
+  boardArray[midRow][
+    midCol
+  ] = `${pieceToRemove.rowPos}_${pieceToRemove.colPos}`;
+
+  var col = boardEl.querySelector('.col[col-data="' + midCol + '"]');
+  col.children[midRow].innerHTML = `<h2></h2>`;
 }
