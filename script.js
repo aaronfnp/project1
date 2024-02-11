@@ -178,13 +178,15 @@ function runGame(event) {
         let diffModifierRow = 2 / diffRow;
         let midRow = parseInt(current_Cell) + diffModifierRow;
         let midCol = parseInt(current_Col) + diffModifierCol;
+        let pieceToRemove = boardArray[midRow][midCol];
 
         if (
-          boardArray[midRow][midCol] instanceof base_piece &&
-          boardArray[midRow][midCol].player != selected_Piece_Data.player
+          pieceToRemove instanceof base_piece &&
+          pieceToRemove.player != selected_Piece_Data.player
           // NEED TO ADD AND OTHER TEAM
         ) {
-          let pieceToRemove = boardArray[midRow][midCol];
+          forwardChecker(diffRow);
+          if (!isForward) return;
           console.log(`Piece is: ${pieceToRemove.color}`);
           if (pieceToRemove.player === 1) pieceCounter_P1--;
           else if (pieceToRemove.player === -1) pieceCounter_P2--;
@@ -302,10 +304,18 @@ function declareWinner(player) {
 
 function forwardChecker(diffRow) {
   // Checks team turn vs difference
+
+  let numberToCheck = diffRow;
+
   console.log(diffRow);
-  if (diffRow === playerTurn) {
+  if (Math.abs(diffRow) === 2) {
+    numberToCheck = diffRow / 2;
+  }
+  if (numberToCheck === playerTurn || selected_Piece_Data.isKing) {
     isForward = true;
+    console.log(`is Forward`);
   } else {
     isForward = false;
+    console.log(`is not Forward`);
   }
 }
