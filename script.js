@@ -132,8 +132,6 @@ function runGame(event) {
       clickedTarget = clickedTarget.parentElement;
     }
 
-    console.log(clickedTarget);
-
     loadData(clickedTarget);
     // Checks if selection valid
     if (
@@ -228,8 +226,9 @@ function runGame(event) {
         return;
       }
 
-      // NOW NEED TO MAKE JUMP OVER MECHANIC
-      if (boardArray[cellData - 1][colData - 1] instanceof base_piece) {
+      // LOGIC HERE FOR KING ME!
+      if (cellData === "0" || cellData === "7") {
+        selected_Piece_Data.isKing = true;
       }
 
       // Creates new piece using selected data
@@ -243,6 +242,9 @@ function runGame(event) {
 
       // Changes visuals for HTML
       selected_Space.innerHTML = `<h2>O</h2>`;
+      if (selected_Piece_Data.isKing) {
+        selected_Space.innerHTML = `<h2>K</h2>`;
+      }
       selected_Space.style.color = selected_Piece_Data.color;
       selected_Piece.innerHTML = `<h2></h2>`;
       boardArray[current_Cell][current_Col] = `${current_Cell}_${current_Col}`;
@@ -256,6 +258,8 @@ function runGame(event) {
     // Changes to 2nd click
     clickSelector *= -1;
   }
+
+  // Declares winner depending on piece counter
   if (pieceCounter_P2 === 0) {
     declareWinner(1);
   } else if (pieceCounter_P1 === 0) {
