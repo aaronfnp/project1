@@ -1,5 +1,5 @@
 /* --- VARIABLES --- */
-const boardArray = [
+let boardArray = [
   ["0_0", null, "0_2", null, "0_4", null, "0_6", null],
   [null, "1_1", null, "1_3", null, "1_5", null, "1_7"],
   ["2_0", null, "2_2", null, "2_4", null, "2_6", null],
@@ -12,6 +12,7 @@ const boardArray = [
 
 const boardEl = document.querySelector("#board-wrapper");
 const colEls = [...boardEl.children];
+const btn_Reset = document.querySelector("button");
 
 // Board Data Variables
 let colData = null;
@@ -39,6 +40,7 @@ let isMoveValid = false;
 let isJumpOver = false;
 let isForward = false;
 let isQueueRemove = false;
+let isContinuous = false;
 let midCol = null;
 let midRow = null;
 
@@ -59,6 +61,7 @@ class base_piece {
 }
 
 boardEl.addEventListener("click", runGame);
+btn_Reset.addEventListener("click", resetBoard);
 initializeGame();
 
 /* --- FUNCTIONS --- */
@@ -110,6 +113,8 @@ function initializeGame() {
       }
     }
   }
+  resetSelectData();
+  playerTurn = 1;
   console.log(boardArray);
 }
 
@@ -156,27 +161,27 @@ function runGame(event) {
         selected_Piece_Data.player === playerTurn
       ) {
         selected_Piece.style.backgroundColor = "green";
-        //Used to save original position
+        //Used to save original position before 2nd click
         current_Cell = cellData;
         current_Col = colData;
       } else {
-        //Resets if blank space
+        //Resets if blank space and not piece
         resetSelectData();
         return;
       }
     }
 
-    // Both must be 2 away for jump over logic
+    // Click on 2 Away logic
 
-    //Difference logic for 2 jump
+    // Calculates the difference between spaces
     let diffCol = parseInt(colData) - parseInt(current_Col);
     let diffRow = parseInt(cellData) - parseInt(current_Cell);
 
+    // If only 2 spaces away, isJumpover
     if (Math.abs(diffCol) === 2 && Math.abs(diffRow) === 2) {
-      console.log("logic for 2 jump");
       isJumpOver = true;
 
-      //Removing Jumped Over Piece Logic
+      //Queues Jumped Over Piece Logic if not same team
       if (isJumpOver) {
         let diffModifierCol = 2 / diffCol;
         let diffModifierRow = 2 / diffRow;
@@ -195,7 +200,6 @@ function runGame(event) {
           return;
         }
       }
-      // Must check if boardaray[] - 1 is instanceof piece
     }
     // Returns if larger gap than 1 && != 2
     if (!isJumpOver) {
@@ -205,7 +209,11 @@ function runGame(event) {
     }
 
     // Resets if clicked on same space
-    if (clickSelector === -1 && selected_Piece === event.target) {
+    if (
+      clickSelector === -1 &&
+      selected_Piece === event.target &&
+      !isContinuous
+    ) {
       resetSelectData();
     }
 
@@ -215,7 +223,7 @@ function runGame(event) {
       selected_Space = event.target;
       selected_Space_Data = boardArray[cellData][colData];
 
-      // CURRENTLY WORKING ON
+      // Checks is moving forward depending on team
       forwardChecker(diffRow);
       if (!isForward) return;
 
@@ -249,8 +257,18 @@ function runGame(event) {
       selected_Piece.innerHTML = `<h2></h2>`;
       boardArray[current_Cell][current_Col] = `${current_Cell}_${current_Col}`;
 
+      isContinuous = false;
+
       if (isQueueRemove) {
         removePiece();
+        continuousChecker(playerTurn);
+        if (selected_Piece_Data.isKing) {
+          continuousChecker(-playerTurn);
+        }
+      }
+
+      if (isContinuous) {
+        return;
       }
 
       resetSelectData();
@@ -273,7 +291,9 @@ function runGame(event) {
 
 // Resets all the variables for data
 function resetSelectData() {
-  selected_Piece.style.backgroundColor = "black";
+  if (selected_Piece !== null) {
+    selected_Piece.style.backgroundColor = "black";
+  }
   selected_Piece = null;
   selected_Space = null;
   selected_Piece_Data = null;
@@ -286,6 +306,7 @@ function resetSelectData() {
   isQueueRemove = false;
   midRow = null;
   midCol = null;
+  isContinuous = false;
 }
 
 function loadData(clickedTarget) {
@@ -319,13 +340,66 @@ function forwardChecker(diffRow) {
   }
 }
 
-function continuousChecker() {
-  //Checks if 2 in front has piece
-  // if yes, checks if the one beyond is open
+function continuousChecker(playerTurn) {
+  console.log(parseInt(cellData) + 2 * playerTurn);
+  console.log(parseInt(colData) + 2);
+  if (
+    parseInt(cellData) + 2 * playerTurn > boardArray[colData].length - 1 ||
+    parseInt(colData) + 2 > boardArray.length - 1 ||
+    parseInt(cellData) + 2 * playerTurn < 0 ||
+    parseInt(colData) - 2 < 0
+  ) {
+    return;
+  }
+  if (
+    boardArray[parseInt(cellData) + playerTurn][
+      parseInt(colData) + 1
+    ] instanceof base_piece ||
+    boardArray[parseInt(cellData) + playerTurn][
+      parseInt(colData) - 1
+    ] instanceof base_piece
+  ) {
+    //Checks if 2 in front has piece
+    if (
+      boardArray[parseInt(cellData) + playerTurn][parseInt(colData) - 1]
+        .player !== selected_Piece.player
+    ) {
+      console.log("has piece in next spot");
+
+      if (
+        !(
+          boardArray[parseInt(cellData) + 2 * playerTurn][
+            parseInt(colData) - 2
+          ] instanceof base_piece &&
+          boardArray[parseInt(cellData) + 2 * playerTurn][
+            parseInt(colData) - 2
+          ] !== null
+        )
+      ) {
+        continuousDeclaration();
+      }
+      if (
+        boardArray[parseInt(cellData) + playerTurn][parseInt(colData) - 1]
+          .player !== selected_Piece.player
+      ) {
+        if (
+          !(
+            boardArray[parseInt(cellData) + 2 * playerTurn][
+              parseInt(colData) + 2
+            ] instanceof base_piece &&
+            boardArray[parseInt(cellData) + 2 * playerTurn][
+              parseInt(colData) + 2
+            ] !== null
+          )
+        ) {
+          continuousDeclaration();
+        }
+      }
+    }
+  }
 }
 
 function removePiece() {
-  //console.log(`Piece is: ${pieceToRemove.color}`);
   if (pieceToRemove.player === 1) pieceCounter_P1--;
   else if (pieceToRemove.player === -1) pieceCounter_P2--;
   console.log(`Piece Counter P1:${pieceCounter_P1}`);
@@ -336,4 +410,41 @@ function removePiece() {
 
   var col = boardEl.querySelector('.col[col-data="' + midCol + '"]');
   col.children[midRow].innerHTML = `<h2></h2>`;
+}
+
+function continuousDeclaration() {
+  isContinuous = true;
+
+  console.log(selected_Space);
+  selected_Piece.style.backgroundColor = "black";
+  loadData(selected_Space);
+
+  selected_Piece = selected_Space;
+  selected_Piece_Data = boardArray[cellData][colData];
+  selected_Piece.style.backgroundColor = "purple";
+
+  current_Cell = cellData;
+  current_Col = colData;
+}
+
+function resetBoard() {
+  boardArray = [
+    ["0_0", null, "0_2", null, "0_4", null, "0_6", null],
+    [null, "1_1", null, "1_3", null, "1_5", null, "1_7"],
+    ["2_0", null, "2_2", null, "2_4", null, "2_6", null],
+    [null, "3_1", null, "3_3", null, "3_5", null, "3_7"],
+    ["4_0", null, "4_2", null, "4_4", null, "4_6", null],
+    [null, "5_1", null, "5_3", null, "5_5", null, "5_7"],
+    ["6_0", null, "6_2", null, "6_4", null, "6_6", null],
+    [null, "7_1", null, "7_3", null, "7_5", null, "7_7"],
+  ];
+
+  for (i = 0; i < 8; i++) {
+    for (j = 0; j < 8; j++) {
+      var col = boardEl.querySelector('.col[col-data="' + j + '"]');
+      col.children[i].innerHTML = `<h2></h2>`;
+    }
+  }
+
+  initializeGame();
 }

@@ -25,8 +25,18 @@
   width: 70vw;
   height: 70vw;
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-h2 {
-  /* color: white; */
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
