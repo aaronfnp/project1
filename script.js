@@ -13,6 +13,8 @@ let boardArray = [
 const boardEl = document.querySelector("#board-wrapper");
 const colEls = [...boardEl.children];
 const btn_Reset = document.querySelector("button");
+const pieceCounter_P1_Text = document.querySelector("#counter_P1");
+const pieceCounter_P2_Text = document.querySelector("#counter_P2");
 
 // Board Data Variables
 let colData = null;
@@ -71,6 +73,8 @@ function initializeGame() {
   // Creates initial pieces - NEED TO REFACTOR
 
   renderBoard();
+  pieceCounter_P1 = 0;
+  pieceCounter_P2 = 0;
 
   // SETTING INITIAL PIECE COUNTERS ON HTML + ARRAY
   for (i = 0; i < 8; i++) {
@@ -400,8 +404,8 @@ function continuousChecker(playerTurn) {
 }
 
 function removePiece() {
-  if (pieceToRemove.player === 1) pieceCounter_P1--;
-  else if (pieceToRemove.player === -1) pieceCounter_P2--;
+  if (pieceToRemove.player === 1) updateCounter("p1");
+  else if (pieceToRemove.player === -1) updateCounter("p2");
   console.log(`Piece Counter P1:${pieceCounter_P1}`);
   console.log(`Piece Counter P2:${pieceCounter_P2}`);
   boardArray[midRow][
@@ -447,4 +451,19 @@ function resetBoard() {
   }
 
   initializeGame();
+  pieceCounter_P1++;
+  pieceCounter_P2++;
+  updateCounter("p1");
+  updateCounter("p2");
+}
+
+function updateCounter(player) {
+  if (player === "p1") {
+    pieceCounter_P1--;
+    pieceCounter_P1_Text.innerHTML = `Pieces Remaining: ${pieceCounter_P1}`;
+  }
+  if (player === "p2") {
+    pieceCounter_P2--;
+    pieceCounter_P2_Text.innerHTML = `Pieces Remaining: ${pieceCounter_P2}`;
+  }
 }
