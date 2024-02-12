@@ -467,16 +467,11 @@ function winnerFunction(player) {
     player = 2;
   }
 
-  // 3_1 - 3_6 WINNER
   for (i = 1; i < 7; i++) {
     var col = boardEl.querySelector('.col[col-data="' + 3 + '"]');
     col.children[i].innerHTML = `<h2>${winnerText[i - 1]}</h2>`;
-    col.children[i].color = "white";
   }
-  // 4_1 4_2 P1 OR P2
   var col2 = boardEl.querySelector('.col[col-data="' + 4 + '"]');
   col2.children[3].innerHTML = `<h2>P</h2>`;
-  col2.children[3].color = "white";
   col2.children[4].innerHTML = `<h2>${player}</h2>`;
-  col2.children[4].color = "white;";
 }
