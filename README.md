@@ -4,7 +4,6 @@ Project Title: Checkers
 <br>
 Technologies Used: CSS, Javascript, HTML
 <br>
-<<<<<<< HEAD
 Screenshot:
 <br>
 ![Alt text](https://github.com/aaronfnp/project1/blob/main/Screenshot1.png?raw=true "Screenshot1")
