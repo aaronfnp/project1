@@ -119,7 +119,6 @@ function initializeGame() {
   }
   resetSelectData();
   playerTurn = 1;
-  console.log(boardArray);
 }
 
 function renderBoard() {
@@ -142,7 +141,6 @@ function runGame(event) {
 
     //If text element is clicked, swaps to the parent div
     if (clickedTarget.tagName === "H2") {
-      console.log(clickedTarget);
       clickedTarget = clickedTarget.parentElement;
     }
 
@@ -155,10 +153,8 @@ function runGame(event) {
       return;
     // Selects Piece if 1st click
     if (clickSelector === 1) {
-      console.log("first click");
       selected_Piece = clickedTarget;
       selected_Piece_Data = boardArray[cellData][colData];
-      console.log(selected_Piece_Data);
       // Verifies that selection is a piece
       if (
         selected_Piece_Data instanceof base_piece &&
@@ -223,7 +219,6 @@ function runGame(event) {
 
     // Selects Space to move if 2nd click
     if (clickSelector === -1 && selected_Piece_Data !== null) {
-      console.log("second click");
       selected_Space = event.target;
       selected_Space_Data = boardArray[cellData][colData];
 
@@ -233,8 +228,6 @@ function runGame(event) {
 
       // If selection is another piece, returns & highlights
       if (selected_Space_Data instanceof base_piece) {
-        // POSSIBLE TO FLASH RED?
-        selected_Space.style.backgroundColor = "blue";
         return;
       }
 
@@ -277,7 +270,6 @@ function runGame(event) {
 
       resetSelectData();
 
-      console.log(boardArray);
       //Changes player turn
       playerTurn *= -1;
     }
@@ -317,13 +309,11 @@ function loadData(clickedTarget) {
   const col = clickedTarget.parentElement;
   colData = col.getAttribute("col-data");
   cellData = clickedTarget.getAttribute("cell-data");
-  console.log(`Column: ${colData}`);
-  console.log(`Row: ${cellData}`);
 }
 
 function declareWinner(player) {
   isWinner = true;
-  console.log(`Winner is: ${player}`);
+  winnerFunction;
 }
 
 function forwardChecker(diffRow) {
@@ -331,22 +321,17 @@ function forwardChecker(diffRow) {
 
   let numberToCheck = diffRow;
 
-  console.log(diffRow);
   if (Math.abs(diffRow) === 2) {
     numberToCheck = diffRow / 2;
   }
   if (numberToCheck === playerTurn || selected_Piece_Data.isKing) {
     isForward = true;
-    console.log(`is Forward`);
   } else {
     isForward = false;
-    console.log(`is not Forward`);
   }
 }
 
 function continuousChecker(playerTurn) {
-  console.log(parseInt(cellData) + 2 * playerTurn);
-  console.log(parseInt(colData) + 2);
   if (
     parseInt(cellData) + 2 * playerTurn > boardArray[colData].length - 1 ||
     parseInt(colData) + 2 > boardArray.length - 1 ||
@@ -368,8 +353,6 @@ function continuousChecker(playerTurn) {
       boardArray[parseInt(cellData) + playerTurn][parseInt(colData) - 1]
         .player !== selected_Piece.player
     ) {
-      console.log("has piece in next spot");
-
       if (
         !(
           boardArray[parseInt(cellData) + 2 * playerTurn][
@@ -406,8 +389,6 @@ function continuousChecker(playerTurn) {
 function removePiece() {
   if (pieceToRemove.player === 1) updateCounter("p1");
   else if (pieceToRemove.player === -1) updateCounter("p2");
-  console.log(`Piece Counter P1:${pieceCounter_P1}`);
-  console.log(`Piece Counter P2:${pieceCounter_P2}`);
   boardArray[midRow][
     midCol
   ] = `${pieceToRemove.rowPos}_${pieceToRemove.colPos}`;
@@ -419,7 +400,6 @@ function removePiece() {
 function continuousDeclaration() {
   isContinuous = true;
 
-  console.log(selected_Space);
   selected_Piece.style.backgroundColor = "black";
   loadData(selected_Space);
 
@@ -475,7 +455,7 @@ function updateCounter(player) {
 function winnerFunction() {
   clearBoard();
   // 3_1 - 3_6 WINNER
-  
+
   // 4_1 - 4_6 PLAYER
   // 5_3 5_4 1! OR 2!
 }
