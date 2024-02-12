@@ -425,7 +425,7 @@ function continuousDeclaration() {
 
   selected_Piece = selected_Space;
   selected_Piece_Data = boardArray[cellData][colData];
-  selected_Piece.style.backgroundColor = "purple";
+  selected_Piece.style.backgroundColor = "green";
 
   current_Cell = cellData;
   current_Col = colData;
@@ -443,18 +443,22 @@ function resetBoard() {
     [null, "7_1", null, "7_3", null, "7_5", null, "7_7"],
   ];
 
-  for (i = 0; i < 8; i++) {
-    for (j = 0; j < 8; j++) {
-      var col = boardEl.querySelector('.col[col-data="' + j + '"]');
-      col.children[i].innerHTML = `<h2></h2>`;
-    }
-  }
+  clearBoard();
 
   initializeGame();
   pieceCounter_P1++;
   pieceCounter_P2++;
   updateCounter("p1");
   updateCounter("p2");
+}
+
+function clearBoard() {
+  for (i = 0; i < 8; i++) {
+    for (j = 0; j < 8; j++) {
+      var col = boardEl.querySelector('.col[col-data="' + j + '"]');
+      col.children[i].innerHTML = `<h2></h2>`;
+    }
+  }
 }
 
 function updateCounter(player) {
@@ -466,4 +470,12 @@ function updateCounter(player) {
     pieceCounter_P2--;
     pieceCounter_P2_Text.innerHTML = `Pieces Remaining: ${pieceCounter_P2}`;
   }
+}
+
+function winnerFunction() {
+  clearBoard();
+  // 3_1 - 3_6 WINNER
+  
+  // 4_1 - 4_6 PLAYER
+  // 5_3 5_4 1! OR 2!
 }
