@@ -5,12 +5,13 @@ Project Title: Checkers
 Technologies Used: CSS, Javascript, HTML
 <br>
 <<<<<<< HEAD
-Screenshot: ![Alt text](/Screenshot2.jpg?raw=true "Screenshot2")
+Screenshot:
 <br>
-=======
-
-> > > > > > > 5c58cb72b3ddf056030fd25842ef8ef1d67d1ac6
-> > > > > > > Link:
-> > > > > > > <br>
-> > > > > > > Future Updates: Color Picker for Respective Teams
-> > > > > > > <br>
+![Alt text](https://github.com/aaronfnp/project1/blob/main/Screenshot1.png?raw=true "Screenshot1")
+<br>
+![Alt text](https://github.com/aaronfnp/project1/blob/main/Screenshot2.png?raw=true "Screenshot1")
+<br>
+Link:
+<br>
+Future Updates: Color Picker for Respective Teams
+<br>
