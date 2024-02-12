@@ -12,5 +12,5 @@ Screenshot:
 <br>
 Link: https://aaronfnp.github.io/project1/
 <br>
-Future Updates: Color Picker for Respective Teams
+Future Updates: Player Turn Text, Color Picker for Respective Teams, Computer AI for opposing team
 <br>
