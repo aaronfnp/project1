@@ -49,6 +49,7 @@ let midRow = null;
 let isWinner = false;
 let pieceCounter_P1 = 0;
 let pieceCounter_P2 = 0;
+let winnerText = ["W", "I", "N", "N", "E", "R"];
 
 /* --- CLASSES --- */
 
@@ -259,7 +260,11 @@ function runGame(event) {
       if (isQueueRemove) {
         removePiece();
         continuousChecker(playerTurn);
-        if (selected_Piece_Data.isKing) {
+        if (
+          selected_Piece_Data.isKing &&
+          pieceCounter_P2 !== 0 &&
+          pieceCounter_P1 !== 0
+        ) {
           continuousChecker(-playerTurn);
         }
       }
@@ -277,10 +282,12 @@ function runGame(event) {
     clickSelector *= -1;
   }
 
+  console.log(pieceCounter_P1);
+  console.log(pieceCounter_P2);
   // Declares winner depending on piece counter
-  if (pieceCounter_P2 === 0) {
+  if (pieceCounter_P2 <= 0) {
     declareWinner(1);
-  } else if (pieceCounter_P1 === 0) {
+  } else if (pieceCounter_P1 <= 0) {
     declareWinner(-1);
   }
 }
@@ -313,7 +320,7 @@ function loadData(clickedTarget) {
 
 function declareWinner(player) {
   isWinner = true;
-  winnerFunction;
+  winnerFunction(player);
 }
 
 function forwardChecker(diffRow) {
@@ -428,6 +435,7 @@ function resetBoard() {
   initializeGame();
   pieceCounter_P1++;
   pieceCounter_P2++;
+  isWinner = false;
   updateCounter("p1");
   updateCounter("p2");
 }
@@ -452,10 +460,23 @@ function updateCounter(player) {
   }
 }
 
-function winnerFunction() {
+function winnerFunction(player) {
   clearBoard();
-  // 3_1 - 3_6 WINNER
 
-  // 4_1 - 4_6 PLAYER
-  // 5_3 5_4 1! OR 2!
+  if ((player = -1)) {
+    player = 2;
+  }
+
+  // 3_1 - 3_6 WINNER
+  for (i = 1; i < 7; i++) {
+    var col = boardEl.querySelector('.col[col-data="' + 3 + '"]');
+    col.children[i].innerHTML = `<h2>${winnerText[i - 1]}</h2>`;
+    col.children[i].color = "white";
+  }
+  // 4_1 4_2 P1 OR P2
+  var col2 = boardEl.querySelector('.col[col-data="' + 4 + '"]');
+  col2.children[3].innerHTML = `<h2>P</h2>`;
+  col2.children[3].color = "white";
+  col2.children[4].innerHTML = `<h2>${player}</h2>`;
+  col2.children[4].color = "white;";
 }
